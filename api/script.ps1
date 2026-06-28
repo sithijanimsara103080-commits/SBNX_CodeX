@@ -6,17 +6,30 @@ Clear-Host
 $supabaseUrl = "https://nusdqyfwqkwinbwcqeor.supabase.co/functions/v1/process-message"
 $supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51c2RxeWZ3cWt3aW5id2NxZW9yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MTc4NTMsImV4cCI6MjA5ODE5Mzg1M30.VjEuoKrkvhr3P-rjWekTVkhPztL8MndioKqUie3Mmhs"
 
-# Cross-platform window title handling
+# Window Title
 if ($PSVersionTable.OS -like "*Windows*") {
     $host.UI.RawUI.WindowTitle = "SBNX CODEX - COGNITIVE INTERFACE V5.0"
 }
 
-Write-Host "[!] INITIALIZING COGNITIVE INTERFACE SYSTEM LAYER..." 
-Write-Host "-----------------------------------------------------------------------------------------------------------------" 
-Write-Host "[+] HOST MACHINE : $env:COMPUTERNAME" 
-Write-Host "[+] PROCESSING   : ARCH_X64_NEURAL_THREAD" 
-Write-Host "[+] LOCAL INST   : CONFIG_NODE_READY" 
-Write-Host "-----------------------------------------------------------------------------------------------------------------" 
+# --- LOADING ANIMATION FUNCTION ---
+function Show-Loading {
+    param ([string]$Message, [int]$Seconds)
+    $frames = @("⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏")
+    $iterations = $Seconds * 10
+    for ($i = 0; $i -lt $iterations; $i++) {
+        $frame = $frames[$i % $frames.Length]
+        Write-Host "`r[$frame] $Message" -NoNewline -ForegroundColor Cyan
+        Start-Sleep -Milliseconds 100
+    }
+    Write-Host "`r[+] $Message... DONE!" -ForegroundColor Green
+}
+
+Write-Host "[!] INITIALIZING COGNITIVE INTERFACE SYSTEM LAYER..." -ForegroundColor Gray
+Write-Host "-----------------------------------------------------------------------------------------------------------------" -ForegroundColor Gray
+Write-Host "[+] HOST MACHINE : $env:COMPUTERNAME" -ForegroundColor Green
+Write-Host "[+] PROCESSING   : ARCH_X64_NEURAL_THREAD" -ForegroundColor Green
+Write-Host "[+] LOCAL INST   : CONFIG_NODE_READY" -ForegroundColor Green
+Write-Host "-----------------------------------------------------------------------------------------------------------------" -ForegroundColor Gray
 Start-Sleep -Seconds 1
 Clear-Host
 
@@ -32,7 +45,7 @@ $BANNER_1 = " __________________________________________________________________
 " _________________________________________________________________________________________________________________"
 
 $BANNER_2 = " _________________________________________________________________________________________________________________`n" +
-" ███████╗██████╗ ███╗   ██╗██╗  ██╗      ██████╗ ██████╗ ██████╗ ███████╗██╗  ██╗`n" +
+" ███████╗██████╗ ███╗   ██╗██╗  ██╗     ██████╗ ██████╗ ██████╗ ███████╗██╗  ██╗`n" +
 " ██╔════╝██╔══██╗████╗  ██║╚██╗██╔╝     ██╔════╝██╔═══██╗██╔══██╗██╔════╝╚██╗██╔╝`n" +
 " ███████╗██████╔╝██╔██╗ ██║ ╚███╔╝      ██║     ██║   ██║██║  ██║█████╗   ╚███╔╝ `n" +
 " ╚════██║██╔══██╗██║╚██╗██║ ██╔██╗      ██║     ██║   ██║██║  ██║██╔══╝   ██╔██╗ `n" +
@@ -40,28 +53,30 @@ $BANNER_2 = " __________________________________________________________________
 " ╚══════╝╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝      ╚═════╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝`n" +
 " _________________________________________________________________________________________________________________"
 
-Clear-Host
-Write-Host $BANNER_1
-Write-Host "  [SYSTEM: ACTIVE]   [MODE: ENTERPRISE_AI_NODE]   [SITE: SBNX CODEX]" 
+Write-Host $BANNER_1 -ForegroundColor Green
+Write-Host "  [SYSTEM: ACTIVE]   [MODE: ENTERPRISE_AI_NODE]   [SITE: SBNX CODEX]" -ForegroundColor Gray
 Write-Host "-----------------------------------------------------------------------------------------------------------------"
-Write-Host " PROVIDE PLATFORM OPERATOR SIGNATURE TO ACCESS CORE COMMANDS"
+Write-Host " PROVIDE PLATFORM OPERATOR SIGNATURE TO ACCESS CORE COMMANDS" -ForegroundColor Yellow
 Write-Host "-----------------------------------------------------------------------------------------------------------------"
-Start-Sleep -Seconds 1
 
 $user = Read-Host "[#] OPERATOR ID  "
 $pass = Read-Host "[#] SECURITY PIN "
 
 if ($user -ne "admin" -or $pass -ne "ai123") {
-    Write-Host "[-] SECURE SHUTDOWN: VERIFICATION FAILED."
+    Write-Host "[-] SECURE SHUTDOWN: VERIFICATION FAILED." -ForegroundColor Red
     Start-Sleep -Seconds 2
     exit
 }
 
 Clear-Host
-Write-Host $BANNER_1
-Write-Host "================================================================================================================="
-Write-Host "SYSTEM ENVIRONMENT READY. CURRENT MODE: CONSOLE SHELL."
-Write-Host "================================================================================================================="
+Show-Loading "LOADING SECURITY SUITE" 1
+Show-Loading "CONNECTING TO COGNITIVE INTERFACE LAYER" 1
+Clear-Host
+
+Write-Host $BANNER_1 -ForegroundColor Green
+Write-Host "=================================================================================================================" -ForegroundColor Gray
+Write-Host "SYSTEM ENVIRONMENT READY. CURRENT MODE: CONSOLE SHELL." -ForegroundColor Green
+Write-Host "=================================================================================================================" -ForegroundColor Gray
 
 $aiMode = $false
 
@@ -72,86 +87,117 @@ while ($true) {
         $msg = Read-Host "Operator@Core:~$"
     }
 
-    # 1. GLOBAL EXIT (Terminal Exit)
-    if ($msg.Trim().ToLower() -eq "exit" -or $msg.Trim().ToLower() -eq "quit") {
-        Write-Host "[-] SHUTTING DOWN NEURAL LINK CONSOLE... GOODBYE!"
+    $trimmedMsg = $msg.Trim()
+
+    # GLOBAL EXIT
+    if ($trimmedMsg.ToLower() -eq "exit" -or $trimmedMsg.ToLower() -eq "quit") {
+        Write-Host "[-] SHUTTING DOWN NEURAL LINK CONSOLE... GOODBYE!" -ForegroundColor Yellow
         Start-Sleep -Seconds 1
         break
     }
     
-    # 2. EXIT FROM AI MODE (Return to local)
-    if ($msg -eq "@exitai" -or $msg -eq "@aiexit" -or $msg -eq "back") {
+    # EXIT FROM AI MODE
+    if ($trimmedMsg -eq "@exitai" -or $trimmedMsg -eq "@aiexit" -or $trimmedMsg -eq "back") {
         if ($aiMode) {
             $aiMode = $false
             Write-Host "-----------------------------------------------------------------------------------------------------------------"
-            Write-Host "[-] SBNX CODEX INTELLIGENCE CORE DEACTIVATED. RETURNED TO LOCAL PARAMETERS."
+            Write-Host "[-] SBNX CODEX INTELLIGENCE CORE DEACTIVATED. RETURNED TO LOCAL PARAMETERS." -ForegroundColor Yellow
             Write-Host "-----------------------------------------------------------------------------------------------------------------"
             continue
         }
     }
 
     # SECRET COMMAND TO ENTER AI MODE
-    if ($msg -eq "@adminai") {
+    if ($trimmedMsg -eq "@adminai") {
         $aiMode = $true
+        Show-Loading "TUNNELING INTO SUPABASE SERVERLESS NETWORK" 1
         Write-Host "-----------------------------------------------------------------------------------------------------------------"
-        Write-Host "[+] SBNX CODEX INTELLIGENCE CORE ACTIVATED. LINKING TO EDGE FUNCTION DIRECTORY..."
+        Write-Host "[+] SBNX CODEX INTELLIGENCE CORE ACTIVATED. LINKING TO EDGE FUNCTION DIRECTORY..." -ForegroundColor Cyan
         Write-Host "-----------------------------------------------------------------------------------------------------------------"
         continue
     }
 
-    if ($msg -eq "@info") {
-        Write-Host "========================================== INFO =========================================="
+    if ($trimmedMsg -eq "@info") {
+        Write-Host "========================================== INFO ==========================================" -ForegroundColor Cyan
         Write-Host "SYSTEM IDENTITY : SBNX Codex Core Processing Core V5.0"
         Write-Host "INTERFACE MODE  : Hybrid Terminal Emulation Layer"
         Write-Host "EDGE ROUTING    : Supabase Serverless Execution Matrix"
-        Write-Host "=========================================================================================="
+        Write-Host "==========================================================================================" -ForegroundColor Cyan
         continue
     }
 
-    if ($msg -eq "clear") {
+    if ($trimmedMsg -eq "clear") {
         Clear-Host
-        if ($aiMode) { Write-Host $BANNER_2 } else { Write-Host $BANNER_1 }
+        if ($aiMode) { Write-Host $BANNER_2 -ForegroundColor Green } else { Write-Host $BANNER_1 -ForegroundColor Green }
         continue
     }
+
+    if ([string]::IsNullOrWhiteSpace($trimmedMsg)) { continue }
 
     # AI MODE RESPONSE PIPELINE
     if ($aiMode) {
-        if (-not $msg) { continue }
-        Write-Host "Thinking..."
+        Write-Host "Thinking..." -ForegroundColor DarkGray
         
-        $body = @{ message = $msg } | ConvertTo-Json -Compress
+        # 3-Key Payload Injection (සර්වර් එකේ මොන ලොජික් එක තිබ්බත් මැච් වෙන්න)
+        $bodyObj = @{ 
+            message = $trimmedMsg
+            prompt  = $trimmedMsg
+            content = $trimmedMsg
+        }
+        $body = $bodyObj | ConvertTo-Json -Compress
         
-        # Injected Auth Headers using your publishable anon key
-        $headers = @{
+        # Standard CORS-Safe Supabase Edge Headers
+        $headers = @{ 
             "apikey"        = $supabaseKey
             "Authorization" = "Bearer $supabaseKey"
+            "X-Client-Info" = "supabase-js-power"
         }
 
         try {
-            $response = Invoke-RestMethod -Uri $supabaseUrl -Method Post -Headers $headers -Body $body -ContentType "application/json; charset=utf-8" -TimeoutSec 30
+            # Web Request එකක් විදිහට Execute කරලා Data Stream එක කියවීම
+            $apiResponse = Invoke-WebRequest -Uri $supabaseUrl -Method Post -Headers $headers -Body $body -ContentType "application/json; charset=utf-8" -TimeoutSec 30
+            $response = $apiResponse.Content | ConvertFrom-Json
             
-            # SMART MULTI-KEY EXTRACTION PARSER
             $replyText = ""
-            if ($response.message) {
-                $replyText = $response.message
-            } elseif ($response.response) {
-                $replyText = $response.response
-            } elseif ($response.reply) {
-                $replyText = $response.reply
-            } else {
-                $replyText = "⚠️ Payload Buffer Empty: No valid text block parsed from endpoint."
-            }
+            if ($response.message) { $replyText = $response.message }
+            elseif ($response.response) { $replyText = $response.response }
+            elseif ($response.reply) { $replyText = $response.reply }
+            elseif ($response.choices[0].message.content) { $replyText = $response.choices[0].message.content }
+            else { $replyText = $apiResponse.Content } # JSON Parser එකක් නැත්නම් මුළු Text එකම
 
-            Write-Host "`n🤖 AI: $replyText`n"
+            Write-Host "`n🤖 AI: $replyText`n" -ForegroundColor Cyan
         }
         catch {
-            Write-Host "`n[-] CONNECTION ERROR: API payload block was rejected. Please verify the Edge Function status.`n"
+            # --- ADVANCED DEBUG MATRIX ---
+            # සර්වර් එකෙන් එවන සැබෑ Error එක (404/500/CORS) කෙළින්ම ප්‍රින්ට් කරනවා
+            $statusCode = $_.Exception.Response.StatusCode.value__
+            $statusDesc = $_.Exception.Response.StatusDescription
+            
+            Write-Host "`n[-] CONNECTION ERROR: Server responded with Status: $statusCode ($statusDesc)" -ForegroundColor Red
+            
+            if ($_.Exception.Response) {
+                $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream())
+                $serverErr = $reader.ReadToEnd()
+                Write-Host "[!] Server Raw Error Dump: $serverErr" -ForegroundColor DarkYellow
+            }
+            Write-Host ""
         }
     } else {
-        # LOCAL CONSOLE MODE COMMANDS
-        if ($msg -eq "ls") { Write-Host "src/   public/   package.json   supabase/" }
-        elseif ($msg -eq "help") { Write-Host "Available: ls, clear, help, @info, exit" }
-        elseif ([string]::IsNullOrWhiteSpace($msg)) { continue }
-        else { Write-Host "'$msg' is not recognized as an internal or external command." }
+        # REAL TERMINAL COMMAND EXECUTION MATRIX
+        try {
+            $finalCmd = $trimmedMsg
+            if ($trimmedMsg.StartsWith("sudo ")) {
+                $finalCmd = $trimmedMsg.Substring(5)
+            }
+
+            if ($PSVersionTable.OS -like "*Windows*") {
+                cmd.exe /c $finalCmd
+            } else {
+                /bin/sh -c $finalCmd
+            }
+        }
+        catch {
+            Write-Host "[-] ExecError: '$trimmedMsg' failed to invoke inside host environment shell." -ForegroundColor Red
+        }
     }
 }
