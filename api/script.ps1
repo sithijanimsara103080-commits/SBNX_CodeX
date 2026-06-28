@@ -15,15 +15,6 @@ Write-Host "--------------------------------------------------------------------
 Start-Sleep -Seconds 1
 Clear-Host
 
-Write-Host "[!] INJECTING CORRUPTED BUFFER INTO MAIN MEMORY..." -ForegroundColor Red
-Start-Sleep -Seconds 1
-for ($i=0; $i -lt 3; $i++) {
-    Write-Host "0x00F3A2$(Get-Random -Min 10 -Max 99)C: $(Get-Random)$(Get-Random)" -ForegroundColor Gray
-}
-Start-Sleep -Seconds 1
-Clear-Host
-
-# Here-Strings වෙනුවට සාමාන්‍ය String එකක් ලෙස සුරක්ෂිතව බැනර් සැකසීම
 $BANNER_1 = " _________________________________________________________________________________________________________________`n" +
 "  ███████████      █████                ███████████      █████████                                            `n" +
 " ░░███░░░░░███    ░░███                ░░███░░░░░███    ███░░░░░███                                           `n" +
@@ -50,14 +41,7 @@ Write-Host "  [SYSTEM: ACTIVE]   [MODE: ENTERPRISE_AI_NODE]   [SITE: SBNX CODEX]
 Write-Host "-----------------------------------------------------------------------------------------------------------------"
 Write-Host " PROVIDE PLATFORM OPERATOR SIGNATURE TO ACCESS CORE COMMANDS"
 Write-Host "-----------------------------------------------------------------------------------------------------------------"
-Start-Sleep -Seconds 3
-
-Clear-Host
-Write-Host $BANNER_2 -ForegroundColor Green
-Write-Host "  [SYSTEM: ACTIVE]   [MODE: ENTERPRISE_AI_NODE]   [SITE: SBNX CODEX]" -ForegroundColor Gray
-Write-Host "-----------------------------------------------------------------------------------------------------------------"
-Write-Host " PROVIDE PLATFORM OPERATOR SIGNATURE TO ACCESS CORE COMMANDS"
-Write-Host "-----------------------------------------------------------------------------------------------------------------"
+Start-Sleep -Seconds 1
 
 $user = Read-Host "[#] OPERATOR ID  "
 $pass = Read-Host "[#] SECURITY PIN "
@@ -84,8 +68,24 @@ while ($true) {
         $msg = Read-Host "Operator@Core:~$"
     }
 
-    if ($msg -eq "exit") { break }
+    # 1. GLOBAL EXIT (ටර්මිනල් එකෙන්ම Exit වීම)
+    if ($msg.Trim().ToLower() -eq "exit" -or $msg.Trim().ToLower() -eq "quit") {
+        Write-Host "[-] SHUTTING DOWN NEURAL LINK CONSOLE... GOODBYE!" -ForegroundColor Yellow
+        Start-Sleep -Seconds 1
+        break
+    }
     
+    # 2. EXIT FROM AI MODE (AI Mode එකෙන් විතරක් අයින් වීම - @exitai, @aiexit හෝ back)
+    if ($msg -eq "@exitai" -or $msg -eq "@aiexit" -or $msg -eq "back") {
+        if ($aiMode) {
+            $aiMode = $false
+            Write-Host "-----------------------------------------------------------------------------------------------------------------"
+            Write-Host "[-] SBNX CODEX INTELLIGENCE CORE DEACTIVATED. RETURNED TO LOCAL PARAMETERS." -ForegroundColor Yellow
+            Write-Host "-----------------------------------------------------------------------------------------------------------------"
+            continue
+        }
+    }
+
     if ($msg -eq "@adminai") {
         $aiMode = $true
         Write-Host "-----------------------------------------------------------------------------------------------------------------"
@@ -99,54 +99,47 @@ while ($true) {
         Write-Host "SYSTEM IDENTITY : SBNX Codex Core Processing Core V5.0"
         Write-Host "INTERFACE MODE  : Hybrid Terminal Emulation Layer"
         Write-Host "EDGE ROUTING    : Supabase Serverless Execution Matrix"
-        Write-Host "LANGUAGES       : English, සිංහල, Singlish Auto-Detection Matrix"
         Write-Host "=========================================================================================="
         continue
     }
 
     if ($msg -eq "clear") {
         Clear-Host
-        if ($aiMode) {
-            Write-Host $BANNER_2 -ForegroundColor Green
-        } else {
-            Write-Host $BANNER_1 -ForegroundColor Green
-        }
+        if ($aiMode) { Write-Host $BANNER_2 -ForegroundColor Green } else { Write-Host $BANNER_1 -ForegroundColor Green }
         continue
     }
 
-    if ($msg.StartsWith("sudo ")) {
-        $passwd = Read-Host "[sudo] password for operator"
-        Write-Host "Processing administrative request..." -ForegroundColor Gray
-        Start-Sleep -Seconds 1
-        if ($msg -eq "sudo apt update") {
-            Write-Host "Get:1 http://archive.ubuntu.com/ubuntu focal InRelease [265 kB]"
-            Write-Host "Fetching dependency tree... Done."
-        } else {
-            Write-Host "Command executed successfully under superuser parameters."
-        }
-        continue
-    }
-
+    # AI MODE RESPONSE PIPELINE
     if ($aiMode) {
         if (-not $msg) { continue }
         Write-Host "Thinking..." -ForegroundColor DarkGray
         
         $body = @{ message = $msg } | ConvertTo-Json -Compress
         try {
-            $response = Invoke-RestMethod -Uri $supabaseUrl -Method Post -Body $body -ContentType "application/json; charset=utf-8" -TimeoutSec 20
+            $response = Invoke-RestMethod -Uri $supabaseUrl -Method Post -Body $body -ContentType "application/json; charset=utf-8" -TimeoutSec 30
             
-            $aiText = $response.message
-            if (-not $aiText) { $aiText = $response.response }
-            if (-not $aiText) { $aiText = $response | Out-String }
+            # SMART MULTI-KEY EXTRACTION PARSER
+            $replyText = ""
+            if ($response.message) {
+                $replyText = $response.message
+            } elseif ($response.response) {
+                $replyText = $response.response
+            } elseif ($response.reply) {
+                $replyText = $response.reply
+            } else {
+                $replyText = "⚠️ Payload Buffer Empty: No valid text block parsed from endpoint."
+            }
 
-            Write-Host "🤖 AI: $aiText" -ForegroundColor Cyan
+            Write-Host "`n🤖 AI: $replyText`n" -ForegroundColor Cyan
         }
         catch {
             Write-Host "[-] CONNECTION ERROR: Unable to parse payload buffer to Supabase. Check networking configurations." -ForegroundColor Red
         }
     } else {
+        # LOCAL CONSOLE MODE COMMANDS
         if ($msg -eq "ls") { Write-Host "src/   public/   package.json   supabase/" }
-        elseif ($msg -eq "help") { Write-Host "Available: ls, clear, help, sudo [cmd], @adminai, @info" }
+        elseif ($msg -eq "help") { Write-Host "Available: ls, clear, help, @adminai, @info, exit" }
+        elseif ([string]::IsNullOrWhiteSpace($msg)) { continue }
         else { Write-Host "'$msg' is not recognized as an internal or external command." }
     }
 }
