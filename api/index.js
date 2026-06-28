@@ -1,10 +1,12 @@
 export default function handler(req, res) {
   const userAgent = req.headers['user-agent'] || '';
 
-  // PowerShell, curl හෝ Wget හරහා එන රික්වෙස්ට් පමණක් ෆිල්ටර් කිරීම
   if (userAgent.includes('PowerShell') || userAgent.includes('curl') || userAgent.includes('Wget')) {
     
-    // JS String එක ඇතුලේ තියෙන PowerShell $ සලකුණු \$ ලෙස Escape කර ඇත.
+    // බැනර් දෙකම බ්‍රේක් නොවෙන්න Base64 වලින් මෙතනට දාලා තියෙන්නේ
+    const banner1Base64 = "IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCiAg4paI4paI4paI4paI4paI4paI4paI4paI4paI4paI4paIICAgICAg4paI4paI4paI4paI4paIICAgICAgICAgICAgICAgIOKWiOKWiOKWiOKWiOKWiOKWiOKWiOKWiOKWiOKWiE独立4paI4paI4paI4paI4paI4paI4paI4paI4paIICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICANCiDClientIDIDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZIgICAgIOKWeOKWeOKWiOKWiOKWiCAgICAgICAgICAgICAgICDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZIgICAg4paI4paI4paI4pZDilZDilZDilZDilZDilZINCiAg4pZECKWiOKWiICAgIOKWeOKWiOKWiICAgIOKWiOKWiOKWiOKWiOKWiOKWiOKWiCAgICDimKDilZDilZDilZDilZDilZIgICAgIOKWeOKWiOKWiCAgICDimKDilZDilZDilZDilZDilZIgICDimKDilZDilZAgICAgIOKWeOKWeOKWiOKWiOKWiOKWiCAg4paI4paI4paI4paI4paIICDilZDilZDilZDilZDilZIgIOKWiOKWiOKWiOKWiOKWiOKWiCAg4paI4paI4paI4paI4paI4paI4paI4paIICAgIA0KICDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZIgICAg4pZDilZDilZDilWiOKWiOKWiOKZICAgIOKWiOKWiOKWiOKWeOKWeOKWiOKWiOKWiCAgICDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZIgICAg4pZDilZDilWiOKWiOKWiOKWiOKWiOKWiOKWiOKWiOKWiCDilZDilZDilZDilZDilZDilZDilZDilZDilZAg4paI4paI4paI4pZDilZDilZDilWiOKWiOKWiCDilZDilZDilWiOKWiOKWiCDilZDilZDilWiOKWiOKWiOKZ4pZDilZDilWiOKWiOKWiOKWeOKWeOKWiOKWiOKWiCANCiAg4pZECKWiOKWiOKWeOKWeOKWeOKWeOKWeOKWeCAgICAgICDilZDilWiOKWiOKWiCAgICAg4pZDilWiOKWiOKWiCDilZDilWiOKWiOKWiCAgICAg4pZECKWiOKWiOKWeOKWeOKWeOKWeOKWeOKWeCAgICAgIOKWeOKWeOKWeOKWeOKWeOKWeOKWeOKWeOKWiOKWiOKWiOKZ4pZECKWiOKWiOKWiOKWiOKWiOKWiOKWiCDilZDilWiOKWiOKWiCAgIOKWiOKWiOKWiCDilZDilWiOKWiOKWiOKWiOKWiOKWiOKWiCDilZDilWiOKWiOKWiOKZ4pZECg== ";
+    const banner2Base64 = "IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCiDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDhDQrilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDhDQrilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDhDQrilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDhDQrilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDhDQrilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDh=";
+
     const psScript = `@'
 \$OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
@@ -31,27 +33,9 @@ for (\$i=0; \$i -lt 3; \$i++) {
 Start-Sleep -Seconds 1
 Clear-Host
 
-\$BANNER_1 = @"
- _________________________________________________________________________________________________________________
-  ███████████      █████                ███████████      █████████                                            
- ░░███░░░░░███    ░░███                ░░███░░░░░███    ███░░░░░███                                           
-  ░███    ░███    ███████    ██████     ░███    ░███   ░███     ░░░   ██████  █████ █████  ██████  ████████    
-  ░██████████    ░░░███░    ███░░███    ░██████████    ░░█████████  ███░░███░░███ ░░███  ███░░███░░███░░███   
-  ░███░░░░░░       ░███     ░███ ░███    ░███░░░░░░      ░░░░░░░░███░███████  ░███  ░███ ░███████  ░███ ░░░    
-  ░███             ░███ ███ ░███ ░███    ░███            ███    ░███░███░░░   ░░███ ███  ░███░░░   ░███        
-  █████            ░░█████  ░░██████     █████          ░░█████████ ░░██████   ░░█████    ░░██████ █████       
- ░░░░░              ░░░░░    ░░░░░░     ░░░░░            ░░░░░░░░░   ░░░░░░     ░░░░░      ░░░░░░ ░░░░░        
- _________________________________________________________________________________________________________________"@
-
-\$BANNER_2 = @"
- _________________________________________________________________________________________________________________
- ███████╗██████╗ ███╗   ██╗██╗  ██╗     ██████╗ ██████╗ ██████╗ ███████╗██╗  ██╗
- ██╔════╝██╔══██╗████╗  ██║╚██╗██╔╝     ██╔════╝██╔═══██╗██╔══██╗██╔════╝╚██╗██╔╝
- ███████╗██████╔╝██╔██╗ ██║ ╚███╔╝      ██║     ██║   ██║██║  ██║█████╗   ╚███╔╝ 
- ╚════██║██╔══██╗██║╚██╗██║ ██╔██╗      ██║     ██║   ██║██║  ██║██╔══╝   ██╔██╗ 
- ███████║██████╔╝██║ ╚████║██╔╝ ██╗     ╚██████╗╚██████╔╝██████╔╝███████╗██╔╝ ██╗
- ╚══════╝╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝      ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝
- _________________________________________________________________________________________________________________"@
+# Base64 string වලින් PowerShell එක ඇතුලෙදීම ASCII Art එක Decode කරගැනීම
+\$BANNER_1 = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("${banner1Base64}"))
+\$BANNER_2 = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("${banner2Base64}"))
 
 Clear-Host
 Write-Host \$BANNER_1 -ForegroundColor Green
@@ -132,7 +116,6 @@ while (\$true) {
         continue
     }
 
-    # AI Mode Response Pipeline
     if (\$aiMode) {
         if (-not \$msg) { continue }
         Write-Host "Thinking..." -ForegroundColor DarkGray
