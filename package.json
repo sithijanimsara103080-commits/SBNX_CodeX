@@ -3,5 +3,6 @@
   "version": "1.0.0",
   "description": "SBNX Codex Hidden Terminal Serverless Deployment",
   "main": "api/index.js",
+  "type": "module",
   "dependencies": {}
 }
